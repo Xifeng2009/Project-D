@@ -13,35 +13,38 @@ from core.skills import *
 '''仆从基类'''
 class Monster:
 
+    # -----基准值-----
     attibution   = None # 属性: 地水火风光暗 TODO//第一属性,第二属性,附加属性
     # 特性 TODO
     healthPoint  = 1    # HP
     magicPoint   = 1    # MP
     damagePoint  = 1    # 攻击力
-    skillPpower  = 1    # 技能强度
-    HP_increase  = 1    # HP成长
-    MP_increase  = 1    # MP成长
-    ATK_increase = 1    # 攻击力成长
+    skillPower   = 1    # 技能强度
     level        = 5    # 等级
     exp          = 1    # 经验值
     expReward    = 1    # 对方经验值收益
     skills       = [None, None, None, None] # 技能表(4)
     passives     = []   # 被动效果
     item         = None # 装备道具
+
+    Wild         = True # 是否野生
+    OwnerID      = None # 所有者ID
+    raceID       = 1    # 种族编号
+    eLevel       = [1, 2, 3]    # 进化等级
+    ePhase       = 1    # 进化阶段
+    eMethod      = 'lvl'# 进化方式: lvl:升级 stone:触媒
+    HP_increase  = 1    # HP成长
+    MP_increase  = 1    # MP成长
+    ATK_increase = 1    # 攻击力成长
+    # image        = 'static/images/001_1_head.png' # 图片
     Alive        = True # 是否死亡
     aStatus      = []   # 正面状态
     pStatus      = []   # 负面状态
-    Wild         = True # 是否野生
-    OwnerID      = None # 所有者ID
-    raceID       = '001'# 种族编号
-    eLevel       = [1, 2, 3]    # 进化等级
-    ePhase       = 1    # 进化阶段
-    image        = 'static/images/001_1_head.png' # 图片
-    eMethod      = 'lvl'# 进化方式: lvl:升级 stone:触媒
 
     def __init__(self, id, name):
         self.id   = id
         self.name = name
+        # 属性与等级的关系
 
     def itemEquip(self, item):
         self.item = item
@@ -77,8 +80,8 @@ class Monster:
         if self.level >= self.eLevel[self.ePhase-1]:
             self.evolution()
 
-    def levelDown(self):
-        self.level -= 1
+    def levelDown(self, n):
+        self.level -= n
 
     def evolution(self):
         self.ePhase += 1
@@ -94,12 +97,27 @@ class Monster:
 
     def castSkill(self, index, target):
         print("[{0}] 对 [{1}] 发动技能 [{2}]".format(self.name, target.name, self.skills[index]))
-
+        # TODO//
     def showSkills(self):
-        print("[{0}]: []\n[{1}]: []\n[{2}]: []\n[{3}]: []".format(self.skills[0], self.skills[1], self.skills[2], self.skills[3]))
+        print("[{0}]: []\n[{1}]: []\n[{2}]: []\n[{3}]: []".format(
+            self.skills[0], self.skills[1], self.skills[2], self.skills[3]
+            )
+        )
 
     def showPassives(self):
         print("[{0}]: {1}".format(self.name, self.passives))
+
+    def showMyPower(self):
+        print("ID   : {:>9}".format(self.id))
+        print("HP   : {:>9}".format(self.id))
+        print("MP   : {:>9}".format(self.id))
+        print("ATK  : {:>9}".format(self.id))
+        print("SP   : {:>9}".format(self.skillPower))
+        print("HPi  : {:>9}".format(self.id))
+        print("MPi  : {:>9}".format(self.id))
+        print("ATKi : {:>9}".format(self.id))
+        print("LEVEL: {:>9}".format(self.id))
+        print("EXP  : {:>9}".format(self.id))
 
     def __str__(self):
         return self.name
