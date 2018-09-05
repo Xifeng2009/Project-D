@@ -27,7 +27,7 @@ def main():
     # 场景: 野外
     print("[{0}] [野外]".format(NOW()))
     print("[{0}] [野外] 选择你的初始怪兽!".format(NOW()))
-    print("[{0}] [野外] 1: 哭哭狗; 2: 玩偶喵; 3: 囤囤鼠".format(NOW()))
+    print("[{0}] [野外] 1: 鼻涕狗; 2: 玩偶喵; 3: 囤囤鼠".format(NOW()))
     while True:
         try:
             choice = int(input())

@@ -50,12 +50,21 @@ def genMonsterInstance(raceID):
         print("[{0}] [MySQL] Database SELECT Success.".format(NOW()))
         print(data)
     '''Example:
-    (1, 'Dog1', '哭哭狗', 
+    (1, 'Dog1', '鼻涕狗', 
     15.0, 2.5, 10.0, 1.2, 
     5.0, 1.8, 3.0, 1.2, 3.0, 1.2, 2.0, 0.8, 
     'Wind', None, 0, 0, 0, 0, 0, 0, 'Guardian', None, None, 4.0, 1, None, 2, 2, 2)
     '''
     # TODO//生成实例
+    '''
+    'id', 'raceID', 'ownerID', 'nickname', 'level', 'exp', 'talent', 'character', 'HP', 'hp_added', 
+    'MP', 'mp_added', 'Attack', 'atk_added', 'Magic', 'mc_added', 'Defence', 'def_added', 'Resistence', 'res_added', 
+    'item', 'fAttribution', 'sAttribution', 'Flight', 'Under', 'Stealth', 'Machine', 'Ghost', 'God', 'fFeature', 
+    'sFeature', 'hFeature', 'Speed', 'Evolution', 'evo_method', 'evo_level', 'evo_direction', 'Size', 'Weight', 'inRepo', 
+    'deathPoint', 'Skill0', 'Skill1', 'Skill2', 'Skill3', 'Skill4', 'Alive', 'aStatus1', 'aStatus2', 'aStatus3', 
+    'pStatus1', 'pStatus2', 'pStatus3'
+    '''
+    # TODO//   NEXT
     return Monster()
 
 

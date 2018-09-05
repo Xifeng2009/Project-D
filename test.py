@@ -50,13 +50,15 @@ def main():
 def main2():
     db = pymysql.connect(**dbConfig)
     cursor = db.cursor()
-    sql = "SELECT * FROM PocketDragonRace WHERE raceID='1'"
+    sql = "SELECT * FROM PocketDragonMonsters"
     cursor.execute(sql)
+    desc = cursor.description
     data = cursor.fetchone()
+    print([i[0] for i in desc])
     print(data)
     # TODO// 取数据库数据生成实例
 
 
 if __name__ == '__main__':
-    main()
+    # main()
     main2()

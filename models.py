@@ -9,92 +9,101 @@ import random
 from core.skills import *
 from settings import Exps, GENDER, NOW
 
-'''仆从基类'''
+'''仆从类'''
 class Monster:
+    '''
+    'id', 'raceID', 'ownerID', 'nickname', 'level', 'exp', 'talent', 'character', 'HP', 'hp_added',
+    'MP', 'mp_added', 'Attack', 'atk_added', 'Magic', 'mc_added', 'Defence', 'def_added', 'Resistence', 'res_added',
+    'item', 'fAttribution', 'sAttribution', 'Flight', 'Under', 'Stealth', 'Machine', 'Ghost', 'God', 'fFeature',
+    'sFeature', 'hFeature', 'Speed', 'Evolution', 'evo_method', 'evo_level', 'evo_direction', 'Size', 'Weight', 'inRepo',
+    'deathPoint', 'Skill0', 'Skill1', 'Skill2', 'Skill3', 'Skill4', 'Alive', 'aStatus1', 'aStatus2', 'aStatus3',
+    'pStatus1', 'pStatus2', 'pStatus3'
+    '''
 
-    # -----基准值-----
-    attibution   = None # 属性: 地水火风光暗 TODO//第一属性,第二属性,附加属性
-    # 特性 TODO
-    healthPoint  = 1    # HP
-    magicPoint   = 1    # MP
-    damagePoint  = 1    # 攻击力
-    skillPower   = 1    # 技能强度
-    exp          = 1    # 经验值
-    expReward    = 1    # 对方经验值收益
-    skills       = [None, None, None, None] # 技能表(4)
-    passives     = []   # 被动效果
-    item         = None # 装备道具
-    Wild         = True # 是否野生
-    OwnerID      = None # 所有者ID
-    raceID       = 1    # 种族编号
-    eLevel       = [1, 2, 3]    # 进化等级
-    ePhase       = 1    # 进化阶段
-    eMethod      = 'lvl'# 进化方式: lvl:升级 stone:触媒
-    HP_increase  = 1    # HP成长
-    MP_increase  = 1    # MP成长
-    ATK_increase = 1    # 攻击力成长
-    # image        = 'static/images/001_1_head.png' # 图片
-    Alive        = True # 是否死亡
-    aStatus      = []   # 正面状态
-    pStatus      = []   # 负面状态
+    Alive = True
 
-    def __init__(self, name, level):
-        self.name  = name
-        self.level = level
-        # 属性与等级的关系
-        # TODO//
+    def __init__(
+            self, id, raceID, nickname, level, talent, character, HP, MP, Attack, Magic, Defence, Resistence, item,
+            fAttribution, sAttribution, Flight, Under, Stealth, Machine, Ghost, God, fFeature, sFeature, hFeature, Speed,
+            Evolution, evo_method, evo_level, evo_direction, Size, Weight, deathPoint, Skill0,
+            Skill1, Skill2, Skill3, Skill4, aStatus1, aStatus2, aStatus3, pStatus1, pStatus2, pStatus3
+            ):
+        self.id        = id
+        self.raceID    = raceID
+        self.nickname  = nickname
+        self.level     = level
+        self.talent    = talent
+        self.character = character
+        self.HP, self.MP, self.Attack, self.Magic, self.Defence, self.Resistence = HP, MP, Attack, Magic, Defence, Resistence
+        self.hp_added  = HP * talent - HP
+        self.mp_added  = MP * talent - MP
+        self.atk_added = Attack * talent - Attack
+        self.mc_added  = Magic * talent - Magic
+        self.def_added = Defence * talent - Defence
+        self.res_added = Resistence * talent - Resistence
+        self.item      = item
+        self.fAttribution, self.sAttribution = fAttribution, sAttribution
+        self.Flight, self.Under, self.Stealth, self.Machine, self.Ghost, self.God = Flight, Under, Stealth, Machine, Ghost, God
+        self.fFeature, self.sFeature, self.hFeature, self.Speed = fFeature, sFeature, hFeature, Speed
+        self.Evolution, self.evo_method, self.evo_level, self.evo_direction = Evolution, evo_method, evo_level, evo_direction
+        self.Size, self.Weight, self.deathPoint = Size, Weight, deathPoint
+        self.Skill0, self.Skill1, self.Skill2, self.Skill3, self.Skill4 = Skill0, Skill1, Skill2, Skill3, Skill4
+        self.skills = [self.Skill1, self.Skill2, self.Skill3, self.Skill4]
+        self.passives = self.Skill0
+        self.aStatus1, self.aStatus2, self.aStatus3 = aStatus1, aStatus2, aStatus3
+        self.pStatus1, self.pStatus2, self.pStatus3 = pStatus1, pStatus2, pStatus3
 
     def itemEquip(self, item):
         self.item = item
-        print("[{0}] 装备了道具 [{1}]!".format(self.name, item))
+        print("[{0}] 装备了道具 [{1}]!".format(self.nickname, item))
 
     def attack(self, target):
         self.target = target
-        print("[{0}] 对 [{1}] 发动攻击".format(self.name, target.name))
+        print("[{0}] 对 [{1}] 发动攻击".format(self.nickname, target.name))
         if random.randint(1, 100) >= 85: # 暴击
-            target.healthPoint = target.healthPoint - self.damagePoint*2
+            target.healthPoint = target.healthPoint - self.Attack*2
         else:
-            target.healthPoint = target.healthPoint - self.damagePoint
+            target.healthPoint = target.healthPoint - self.Attack
         if target.healthPoint <= 0:
             target.death()
 
     def death(self):
         self.Alive = False
-        print("[{0}] 倒下, 丧失战斗能力!".format(self.name))
-        if self.Wild: self.drop()
+        print("[{0}] 倒下, 丧失战斗能力!".format(self.nickname))
 
-    def drop(self): #TODO: Class Player
-        print("[{0}] 掉落了道具 [{1}]".format(self.name, self.item))
+    def drop(self):
+        # TODO: Class Player
+        print("[{0}] 掉落了道具 [{1}]".format(self.nickname, self.item))
         self.item = None
 
     def getExp(self, target):
-        self.exp += target.expReward
+        self.exp += target.deathPoint
         if self.exp >= Exps[self.level]:
             self.levelUp()
             self.exp = self.exp - Exps[self.level]
 
     def levelUp(self):
         self.level += 1
-        if self.level >= self.eLevel[self.ePhase-1]:
+        if self.level >= self.evo_level:
             self.evolution()
 
     def levelDown(self, n):
         self.level -= n
 
-    def evolution(self):
-        self.ePhase += 1
+    def evolution(self): #TODO
+        pass
 
     def learnSkill(self, skill):
         if None in self.skills:
             self.skills[self.skills.index(None)] = skill
-            print("[{0}] 学会了技能 [{1}]".format(self.name, skill))
+            print("[{0}] 学会了技能 [{1}]".format(self.nickname, skill))
         else:
             forget = input("想忘记哪一个技能? 0:{0}, 1:{1}, 2:{2}, 3:{3}".format(self.skills[0], self.skills[1], self.skills[2], self.skills[3]))
             self.skills[forget] = skill
-            print("[{0}] 已经学会了新技能 [{1}]".format(self.name, skill))
+            print("[{0}] 已经学会了新技能 [{1}]".format(self.nickname, skill))
 
     def castSkill(self, index, target):
-        print("[{0}] 对 [{1}] 发动技能 [{2}]".format(self.name, target.name, self.skills[index]))
+        print("[{0}] 对 [{1}] 发动技能 [{2}]".format(self.nickname, target.name, self.skills[index]))
         # TODO//
     def showSkills(self):
         print("[{0}]: []\n[{1}]: []\n[{2}]: []\n[{3}]: []".format(
@@ -103,22 +112,19 @@ class Monster:
         )
 
     def showPassives(self):
-        print("[{0}]: {1}".format(self.name, self.passives))
+        print("[{0}]: {1}".format(self.nickname, self.passives))
 
     def showMyPower(self):
-        print("ID   : {:>9}".format(self.id))
-        print("HP   : {:>9}".format(self.id))
-        print("MP   : {:>9}".format(self.id))
-        print("ATK  : {:>9}".format(self.id))
-        print("SP   : {:>9}".format(self.skillPower))
-        print("HPi  : {:>9}".format(self.id))
-        print("MPi  : {:>9}".format(self.id))
-        print("ATKi : {:>9}".format(self.id))
-        print("LEVEL: {:>9}".format(self.id))
-        print("EXP  : {:>9}".format(self.id))
+        print("ID    : {:>9}".format(self.id))
+        print("HP    : {:>9}".format(self.HP))
+        print("MP    : {:>9}".format(self.MP))
+        print("Attack: {:>9}".format(self.Attack))
+        print("Magic : {:>9}".format(self.Magic))
+        print("LEVEL : {:>9}".format(self.level))
+        print("EXP   : {:>9}".format(self.exp))
 
     def __str__(self):
-        return self.name
+        return self.nickname
 
 '''玩家类'''
 class Master:
