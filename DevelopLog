@@ -4,11 +4,11 @@
 TODO//角色类 2018.09.03
 TODO//基础技能//中级技能//高级技能
 TODO//基础道具//中级道具//高级道具
-TODO//进化机制
-TODO//种族值系统
-TODO//等级系统
-TODO//第一属性,第二属性,附加属性
-TODO//怪兽特性
+TODO//进化系统: 在settings中设定进化条件 2018.09.06
+TODO//种族值系统: 在Race表中设定初始值及成长,使用天赋talent(0.5-1.5)计算 2018.09.06
+TODO//等级系统:
+TODO//第一属性,第二属性,附加属性: 在settings中设定进化条件 2018.09.06
+TODO//性格特性: 在settings中设定进化条件 2018.09.06
 TODO//运气系统
 TODO//背包系统
 TODO//所有者系统
@@ -18,6 +18,8 @@ TODO//交易系统
 TODO//NPC系统
 TODO//故事
 TODO//场景系统
+TODO//商城系统
+TODO//交易系统
 
 优先级
 TODO//编组功能 DONE 2018.09.03
@@ -34,7 +36,8 @@ TODO//种族值数据库: 建表完成 2018.09.04 TODO//角色定位分类
 TODO//怪兽数据库:
             所有怪兽当前状态表
             生成怪兽流程: 2018.09.05
-                RaceTable--MonstersTable--Model
+                RaceTable--Model--MonstersTable
+            M表HP等上限
 TODO//用户数据库
             玩家当前状态表/把怪兽数据存储在Monsters表,Player表存储对应ID,提取数据生成实例
 TODO//属性克制表

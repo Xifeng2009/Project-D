@@ -40,6 +40,7 @@ def main():
     race = { 1: 1, 2: 4, 3: 7 }
     raceC = race[choice]
     print("race: ", raceC)
+
     monster = genMonsterInstance(raceC)
     print("[{0}] [野外] 你想给它取个名字吗?".format(NOW()))
     mName = input("输入名字: ")

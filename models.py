@@ -6,52 +6,61 @@ ALL Skills   Base On Skill Json
 '''
 
 import random
+import pymysql
 from core.skills import *
-from settings import Exps, GENDER, NOW
+from settings import Exps, GENDER, CHARACTER, EVOLUTION, SKILL, PASSIVE, NOW, dbConfig
 
 '''仆从类'''
 class Monster:
-    '''
-    'id', 'raceID', 'ownerID', 'nickname', 'level', 'exp', 'talent', 'character', 'HP', 'hp_added',
-    'MP', 'mp_added', 'Attack', 'atk_added', 'Magic', 'mc_added', 'Defence', 'def_added', 'Resistence', 'res_added',
-    'item', 'fAttribution', 'sAttribution', 'Flight', 'Under', 'Stealth', 'Machine', 'Ghost', 'God', 'fFeature',
-    'sFeature', 'hFeature', 'Speed', 'Evolution', 'evo_method', 'evo_level', 'evo_direction', 'Size', 'Weight', 'inRepo',
-    'deathPoint', 'Skill0', 'Skill1', 'Skill2', 'Skill3', 'Skill4', 'Alive', 'aStatus1', 'aStatus2', 'aStatus3',
-    'pStatus1', 'pStatus2', 'pStatus3'
-    '''
 
-    Alive = True
+    id       = None
+    nickname = None
+    Alive    = True
+    aStatus1, aStatus2, aStatus3 = [None, None, None]
+    pStatus1, pStatus2, pStatus3 = [None, None, None]
 
-    def __init__(
-            self, id, raceID, nickname, level, talent, character, HP, MP, Attack, Magic, Defence, Resistence, item,
-            fAttribution, sAttribution, Flight, Under, Stealth, Machine, Ghost, God, fFeature, sFeature, hFeature, Speed,
-            Evolution, evo_method, evo_level, evo_direction, Size, Weight, deathPoint, Skill0,
-            Skill1, Skill2, Skill3, Skill4, aStatus1, aStatus2, aStatus3, pStatus1, pStatus2, pStatus3
-            ):
-        self.id        = id
+    def __init__(self, raceID, level, item=None):
         self.raceID    = raceID
-        self.nickname  = nickname
         self.level     = level
-        self.talent    = talent
-        self.character = character
-        self.HP, self.MP, self.Attack, self.Magic, self.Defence, self.Resistence = HP, MP, Attack, Magic, Defence, Resistence
-        self.hp_added  = HP * talent - HP
-        self.mp_added  = MP * talent - MP
-        self.atk_added = Attack * talent - Attack
-        self.mc_added  = Magic * talent - Magic
-        self.def_added = Defence * talent - Defence
-        self.res_added = Resistence * talent - Resistence
+        self.talent    = random.uniform(0.5, 1.5)
         self.item      = item
-        self.fAttribution, self.sAttribution = fAttribution, sAttribution
-        self.Flight, self.Under, self.Stealth, self.Machine, self.Ghost, self.God = Flight, Under, Stealth, Machine, Ghost, God
-        self.fFeature, self.sFeature, self.hFeature, self.Speed = fFeature, sFeature, hFeature, Speed
-        self.Evolution, self.evo_method, self.evo_level, self.evo_direction = Evolution, evo_method, evo_level, evo_direction
-        self.Size, self.Weight, self.deathPoint = Size, Weight, deathPoint
-        self.Skill0, self.Skill1, self.Skill2, self.Skill3, self.Skill4 = Skill0, Skill1, Skill2, Skill3, Skill4
-        self.skills = [self.Skill1, self.Skill2, self.Skill3, self.Skill4]
-        self.passives = self.Skill0
-        self.aStatus1, self.aStatus2, self.aStatus3 = aStatus1, aStatus2, aStatus3
-        self.pStatus1, self.pStatus2, self.pStatus3 = pStatus1, pStatus2, pStatus3
+        data = self.db2init()
+        self.HP, self.MP, self.Attack, self.Magic, self.Defence, self.Resistence = (data[3], data[5], data[7], data[9], data[11], data[13])*level*self.talent
+        self.character = CHARACTER.keys()[random.randint(0, 18)]
+        self.fAttribution, self.sAttribution = data[15], data[16]
+        self.Flight, self.Under, self.Stealth, self.Machine, self.Ghost, self.God = data[17], data[18], data[19], data[20], data[21], data[22]
+        self.fFeature, self.sFeature, self.hFeature, self.Speed = data[23], data[24], data[25], data[26]
+        self.Evolution = EVOLUTION[raceID][0]
+        self.evo_method, self.evo_level, self.evo_direction = EVOLUTION[raceID][1], EVOLUTION[raceID][2], EVOLUTION[raceID][3]
+        self.Size, self.Weight = data[27], data[28]
+        self.deathPoint = level * 5
+        passives = PASSIVE[raceID]
+        if len(passives) == 3:
+            self.passive = PASSIVE[raceID][random.randint(0, 2)]
+        elif len(passives) == 2:
+            self.passive = PASSIVE[raceID][random.randint(0, 1)]
+        elif len(passives) == 1:
+            self.passive = PASSIVE[raceID][0]
+        else:
+            self.passive = None
+        self.Skill1, self.Skill2, self.Skill3, self.Skill4 = SKILL[raceID].keys()[-4:]
+        self.skills   = [self.Skill1, self.Skill2, self.Skill3, self.Skill4]
+        # TODO// 等待测试实例生成
+
+    def db2init(self): # 从数据库中查询Race表,用于init
+        try:
+            db = pymysql.connect(**dbConfig)
+            cursor = db.cursor()
+        except Exception as e:
+            print("[{0}] [MySQL] Database Connect Error:\n{1}".format(NOW(), e))
+        sql = '''
+            SELECT * FROM PocketDragonRace WHERE raceID='{0}'
+        '''.format(self.raceID)
+        try:
+            cursor.execute(sql)
+        except Exception as e:
+            print("[{0}] [MySQL] Database INSERT Error:\n{1}".format(NOW(), e))
+        return cursor.fetchone()
 
     def itemEquip(self, item):
         self.item = item
@@ -112,7 +121,7 @@ class Monster:
         )
 
     def showPassives(self):
-        print("[{0}]: {1}".format(self.nickname, self.passives))
+        print("[{0}]: {1}".format(self.nickname, self.passive))
 
     def showMyPower(self):
         print("ID    : {:>9}".format(self.id))
