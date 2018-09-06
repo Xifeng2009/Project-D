@@ -52,6 +52,7 @@ class Monster:
             cursor = db.cursor()
         except Exception as e:
             print("[{0}] [MySQL] Database Connect Error:\n{1}".format(NOW(), e))
+            return
         sql = '''
             SELECT * FROM PocketDragonRace WHERE raceID='{0}'
         '''.format(self.raceID)
@@ -165,9 +166,8 @@ class Master:
         "Ornaments": None, # 饰品
     }
 
-    def __init__(self, id, name):
+    def __init__(self, name):
         self.name = name
-        self.id   = id
 
     def showMyPower(self):
         print("姓名: {:>9}".format(self.name))

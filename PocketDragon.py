@@ -46,6 +46,7 @@ def main():
     mName = input("输入名字: ")
     monster.nickname = mName
     print("[{0}] [野外] [{1}]? 这名字真不错".format(NOW(), mName))
+    # 存入数据库 TODO
     # 加入队伍
 
 
