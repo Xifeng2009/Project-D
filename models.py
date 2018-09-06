@@ -20,13 +20,14 @@ class Monster:
     pStatus1, pStatus2, pStatus3 = [None, None, None]
 
     def __init__(self, raceID, level, item=None):
+
         self.raceID    = raceID
         self.level     = level
         self.talent    = random.uniform(0.5, 1.5)
         self.item      = item
         data = self.db2init()
-        self.HP, self.MP, self.Attack, self.Magic, self.Defence, self.Resistence = (data[3], data[5], data[7], data[9], data[11], data[13])*level*self.talent
-        self.character = CHARACTER.keys()[random.randint(0, 18)]
+        self.HP, self.MP, self.Attack, self.Magic, self.Defence, self.Resistence = data[3], data[5]*level*self.talent, data[7]*level*self.talent, data[9]*level*self.talent, data[11]*level*self.talent, data[13]*level*self.talent
+        self.character = [k for k in CHARACTER.keys()][random.randint(0, 1)]
         self.fAttribution, self.sAttribution = data[15], data[16]
         self.Flight, self.Under, self.Stealth, self.Machine, self.Ghost, self.God = data[17], data[18], data[19], data[20], data[21], data[22]
         self.fFeature, self.sFeature, self.hFeature, self.Speed = data[23], data[24], data[25], data[26]
@@ -43,9 +44,7 @@ class Monster:
             self.passive = PASSIVE[raceID][0]
         else:
             self.passive = None
-        self.Skill1, self.Skill2, self.Skill3, self.Skill4 = SKILL[raceID].keys()[-4:]
-        self.skills   = [self.Skill1, self.Skill2, self.Skill3, self.Skill4]
-        # TODO// 等待测试实例生成
+        self.skills = [s for s in SKILL[raceID].keys()]
 
     def db2init(self): # 从数据库中查询Race表,用于init
         try:

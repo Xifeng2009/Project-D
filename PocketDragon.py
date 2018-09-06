@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from settings import NOW, GENDER_CN
-from functions import createMaster, genMonsterInstance, getMonster
+from functions import createMaster, getMonster
 from models import Monster, Master, Item, NPC
 
 
@@ -30,7 +30,7 @@ def main():
     print("[{0}] [野外] 1: 鼻涕狗; 2: 玩偶喵; 3: 囤囤鼠".format(NOW()))
     while True:
         try:
-            choice = int(input())
+            choice = int(input("输入你的选择(1/2/3): "))
             if choice in [1, 2, 3]:
                 break
         except: pass
@@ -41,9 +41,11 @@ def main():
     raceC = race[choice]
     print("race: ", raceC)
 
-    monster = genMonsterInstance(raceC)
+    monster = Monster(raceC, 5)
     print("[{0}] [野外] 你想给它取个名字吗?".format(NOW()))
     mName = input("输入名字: ")
+    monster.nickname = mName
+    print("[{0}] [野外] [{1}]? 这名字真不错".format(NOW(), mName))
     # 加入队伍
 
 
