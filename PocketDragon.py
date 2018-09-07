@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from settings import NOW, GENDER_CN
-from functions import createMaster, getMonster
+from settings import NOW, GENDER_CN, EVOLUTION
+from functions import createMaster, createMonster
 from models import Monster, Master, Item, NPC
 
 
@@ -19,9 +19,12 @@ def main():
         if gender == '0' or gender == '1':
             break
     print("[{0}] [GAME] 原来是个{1}孩子!".format(NOW(), GENDER_CN[int(gender)]))
-    createMaster(1, name, int(gender))
+    # 创建角色
+    pid = createMaster(1, name, int(gender))
+    print("pid: ", pid)
+    player = Master(pid, name, int(gender))
     # 场景: 家
-    print("[{0}] [家] 妈妈: [{1}], 这里就是你的新家了, 有空去镇子上跟大家打个招呼吧".format(NOW(), name))
+    print("[{0}] [家] 妈妈: [{1}], 这里就是你的新家了, 有空去镇子上跟大家打个招呼吧".format(NOW(), player.name))
     # 场景: 新心镇
     print("[{0}] [新心镇]".format(NOW()))
     # 场景: 野外
@@ -40,15 +43,16 @@ def main():
     race = { 1: 1, 2: 4, 3: 7 }
     raceC = race[choice]
     print("race: ", raceC)
-
-    monster = Monster(raceC, 5)
+    monster = Monster(raceC, 1, 5)
     print("[{0}] [野外] 你想给它取个名字吗?".format(NOW()))
     mName = input("输入名字: ")
-    monster.nickname = mName
-    print("[{0}] [野外] [{1}]? 这名字真不错".format(NOW(), mName))
-    # 存入数据库 TODO
+    monster.nickname = mName if mName else EVOLUTION[raceC][-1]
+    print("[{0}] [野外] [{1}]? 这名字真不错".format(NOW(), monster.nickname))
+    # 存入数据库
+    mid = createMonster(monster)
+    # 收服怪兽
+    player.getMonster(mid)
     # 加入队伍
-
 
 if __name__ == '__main__':
     main()

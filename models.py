@@ -8,7 +8,7 @@ ALL Skills   Base On Skill Json
 import random
 import pymysql
 from core.skills import *
-from settings import Exps, GENDER, CHARACTER, EVOLUTION, SKILL, PASSIVE, NOW, dbConfig
+from settings import Exps, GENDER, CHARACTER, EVOLUTION, SKILL, PASSIVE, NOW, dbConfig, DEBUG
 
 '''仆从类'''
 class Monster:
@@ -19,9 +19,10 @@ class Monster:
     aStatus1, aStatus2, aStatus3 = [None, None, None]
     pStatus1, pStatus2, pStatus3 = [None, None, None]
 
-    def __init__(self, raceID, level, item=None):
+    def __init__(self, raceID, gender, level, item=None):
 
         self.raceID    = raceID
+        self.gender    = gender
         self.level     = level
         self.talent    = random.uniform(0.5, 1.5)
         self.item      = item
@@ -35,12 +36,12 @@ class Monster:
         self.evo_method, self.evo_level, self.evo_direction = EVOLUTION[raceID][1], EVOLUTION[raceID][2], EVOLUTION[raceID][3]
         self.Size, self.Weight = data[27], data[28]
         self.deathPoint = level * 5
-        passives = PASSIVE[raceID]
-        if len(passives) == 3:
+        self.passives = PASSIVE[raceID]
+        if len(self.passives) == 3:
             self.passive = PASSIVE[raceID][random.randint(0, 2)]
-        elif len(passives) == 2:
+        elif len(self.passives) == 2:
             self.passive = PASSIVE[raceID][random.randint(0, 1)]
-        elif len(passives) == 1:
+        elif len(self.passives) == 1:
             self.passive = PASSIVE[raceID][0]
         else:
             self.passive = None
@@ -135,9 +136,10 @@ class Monster:
     def __str__(self):
         return self.nickname
 
-'''玩家类'''
+'''角色类'''
 class Master:
-
+    # TODO//修改角色类
+    uid          = None
     Money        = 100 # 金钱,用于购买道具,恢复体力,交易仆从
     Strength     = 100 # 体力,0-200,归零时丢失金钱被送回医院
     StrengthTopLimit = 100 # 体力上限
@@ -148,7 +150,7 @@ class Master:
     Gender       = 1   # 0 = 女; 1 = 男
     Level        = 1   # 等级
     # PlayerTeamID = '0000000'
-    PocketTeam   = [None, None, None, None, None, None] # 队伍中的Monster
+    PocketTeam   = [None, None, None, None, None, None] # 队伍中的Monster TODO//存入数据库ID, 建一个新表Team存放
     mRepository  = []                                   # 怪兽仓库
     iRepository  = []                                   # 道具仓库
     # ---------背包系统----------
@@ -166,8 +168,10 @@ class Master:
         "Ornaments": None, # 饰品
     }
 
-    def __init__(self, name):
+    def __init__(self, pid, name, gender):
+        self.pid   = pid
         self.name = name
+        self.gender = gender
 
     def showMyPower(self):
         print("姓名: {:>9}".format(self.name))
@@ -209,6 +213,24 @@ class Master:
                 print("[{0}]选择整理背包:")
                 print(self.MainBag)
                 # 待处理道具堆叠
+
+    def getMonster(self, mid):
+        try:
+            db = pymysql.connect(**dbConfig)
+            cursor = db.cursor()
+        except Exception as e:
+            print("[{0}] [MySQL] Database Connect Error:\n{1}".format(NOW(), e))
+            return
+        sql = '''
+            UPDATE PocketDragonMonsters SET OWNERID = '{0}' WHERE id='{1}'
+        '''.format(self.pid, mid)
+        try:
+            cursor.execute(sql)
+            db.commit()
+            print("[{0}] 得到了怪兽!".format(self.name))
+        except Exception as e:
+            if DEBUG:
+                print("[{0}] [MySQL] Database INSERT Error:\n{1}".format(NOW(), e))
 
     def addTeamMember(self, monster):
         if None in self.PocketTeam:

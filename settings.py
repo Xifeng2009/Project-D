@@ -48,7 +48,7 @@ CHARACTER = { # 性格表
     # TODO//
 }
 EVOLUTION = { # 进化表
-    # RACE: [METHOD, LEVEL, DIRECTION, AREA, NAME]
+    # RACE: [BOOL, METHOD, LEVEL, DIRECTION, AREA, NAME]
     # BOOL: 0:不进化 1: 进化
     # METHOD: 0: 不进化 1: 升级 1: 触媒 2: 交换 3: 亲密度 4: 场景
     # LEVEL : 进化需要等级(浮动2)
